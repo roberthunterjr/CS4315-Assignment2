@@ -53,7 +53,7 @@ class Centroid:
   
   def recenter(self):
     numPoints = len(self.dataPoints)
-    print('This centroid has ',numPoints, 'dataPoints')
+    # print('This centroid has ',numPoints, 'dataPoints')
     if(numPoints > 0):
       numDimensions = len(self.dataPoints[0].getData())
       newDimensions = [0] * numDimensions
@@ -89,9 +89,9 @@ def initializePoints(dataPoints):
 def getEuclidian(centroid,dataObj):
   newMeasures = []
   squareMeasures = []
-  print('centroid dimensions',centroid.getDimensions())
+  # print('centroid dimensions',centroid.getDimensions())
   for i in range(len(centroid.getDimensions())):
-    print(dataObj.getPoint(i))
+    # print(dataObj.getPoint(i))
     newMeasures.append(centroid.getDimension(i) - dataObj.getPoint(i))
   total = 0
   for measure in newMeasures:
@@ -108,50 +108,45 @@ def assignCentroidToObj(centroids, dataObj):
   for i in range(1,len(centroids)):
     newDistance = getEuclidian(centroids[i], dataObj)
     if newDistance < minDistance:
-      print('Old distance is ',minDistance,' and new distance is ',newDistance)
+      # print('Old distance is ',minDistance,' and new distance is ',newDistance)
       minDistance = newDistance
       if(dataObj.getCluster() != i):
         dataObj.setCluster(i)
-        print('Cluster set to ',i)
+        # print('Cluster set to ',i)
         wasReassigned = True
   return wasReassigned
+
 # Add each point to a corresponding centroid for recentering puposes, then clear them out
 def addPointsToCentroids(centroids, dataObjs):
   for point in dataObjs:
-    print('Adding',point.getData(),' to cluster ',point.getCluster())
+    # print('Adding',point.getData(),' to cluster ',point.getCluster())
     centroids[point.getCluster()].addPoint(point) # Adds deach point to their corresponding centroid in the centroid array
 
 # Method to recenter all of the centroids based on datapoints currently assigned
 def recenterCentroids(centroids, dataObjs):
-  print('Recentering Centroids')
+  # print('Recentering Centroids')
   addPointsToCentroids(centroids, dataObjs)
-  # print('Adding temp points complete')
   for centroid in centroids:
     centroid.recenter()
 
-####
+#########################
 ##  Starting main process
-print('Starting***********************************************')
+# print('Starting***********************************************')
 path = sys.argv[1]
 k = int(sys.argv[2])
 
 gDataPoints = Reader(path).read()
-# print(gDataPoints)
 
 centroidArray = initializeCentroids(k, len(gDataPoints[0]))
 dataObjects = initializePoints(gDataPoints)
 
-for centroid in centroidArray:
-  print(centroid.getDimensions())
 
 # Initial assignment of centroids to each datapoint
-
 for point in dataObjects:
   assignCentroidToObj(centroidArray, point)
 
+
 # Initial recentering of centroids
-# recenterCentroids(centroidArray, dataObjects)
-# looping = True
 while(True):
   looping = False
   recenterCentroids(centroidArray, dataObjects)
@@ -159,9 +154,8 @@ while(True):
     # While there is still a new centroid assignment from the dataObjects
     if(assignCentroidToObj(centroidArray, point)):
       looping = True
-  # print('looping is ',looping)
-  for point in dataObjects:
-    print('In Loop: data is ',point.getData(),' and cluster is',point.getCluster())
+  # for point in dataObjects:
+    # print('In Loop: data is ',point.getData(),' and cluster is',point.getCluster())
   if(looping == False):
     break
 
@@ -171,8 +165,8 @@ for point in dataObjects:
   data = point.getData()
   data.append(str(point.getCluster()))
   finalData.append(data)
+
 # Done recentering, ready to output
-# print(finalData)
 outWriter = Writer('output.txt')
 outWriter.write(finalData)
   
